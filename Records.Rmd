@@ -1,0 +1,50 @@
+---
+title: 'Liste des records'
+subtitle: |
+  | `r ifelse(input$catégorie == 1, 'Toutes catégories confondues', paste('Catégorie :', input$catégorie, sep = ' '))`
+  | Toutes saisons confondues
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r echo = FALSE}
+test_chrono <- 
+  c('Conduite pied droit',
+    'Conduite pied gauche',
+    'Vivacité L',
+    'Vitesse 10m',
+    'Vitesse 20m',
+    'Vitesse 40m')
+  
+test_nonchrono <- 
+  c('Luc-Léger',
+    'Jonglage pied droit',
+    'Jonglage pied gauche',
+    'Jonglage tête',
+    'Détente')
+```
+
+```{r echo = FALSE}
+# Mise en place du filtre de la catégorie
+if(input$catégorie != 1){
+  data <- data[data$Equipe %in% input$catégorie,]
+}
+```
+
+
+```{r echo = FALSE}
+chrono <- data[data$Test %in% test_chrono,]
+nonchrono <- data[data$Test %in% test_nonchrono,]
+chrono <- aggregate(chrono$Résultat, by = list(chrono$Test), FUN = function(x){min(x, na.rm = TRUE)})
+nonchrono <- aggregate(nonchrono$Résultat, by = list(nonchrono$Test), FUN = function(x){max(x, na.rm = TRUE)})
+records <- rbind(chrono, nonchrono)
+colnames(records) <- c('Test', 'Record')
+records <- merge(records, data, by.x = c('Test', 'Record'), by.y = c('Test', 'Résultat'), all.x = TRUE)  
+records <- records %>% select(Test, Record, Joueuse, Saison, Session, Sous_cat) 
+colnames(records) <- c('Test', 'Record', 'Joueuse', 'Saison', 'Session', 'Sous-catégorie')
+knitr::kable(records, align = c('lrlccc'))
+```
+

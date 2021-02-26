@@ -1,0 +1,202 @@
+---
+title: "`r paste('Les', input$Top, 'meilleures performeuses par test', sep = ' ')`"
+subtitle: |
+  | `r ifelse(input$catégorie == 1, 'Toutes catégories confondues', paste('Catégorie :', input$catégorie, sep = ' '))`
+  | `r ifelse(input$saison == 2, paste('Saison : ', max(data$Saison)-1, '/', max(data$Saison), sep = ''), 'Toutes saisons confondues')`
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r echo = FALSE}
+# Mise en place du filtre de saison
+if(input$saison == 2){
+  data <- data[data$Saison == max(data$Saison),]
+}
+
+# Mise en place du filtre de la catégorie
+if(input$catégorie != 1){
+  data <- data[data$Equipe %in% input$catégorie,]
+}
+```
+
+
+```{r echo = FALSE}
+# Luc-Léger
+perf <- data %>% 
+  filter(data$Test == 'Luc-Léger') %>% 
+  na.omit()
+if(nrow(perf) > 0){
+  perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = max)
+  colnames(perf) <- c('Test', 'Joueuse', 'Record')
+  perf$Rang <- rank(desc(perf$Record), ties.method = 'min')
+  perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+  perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+  perf <- perf[order(perf$Rang),]
+  rownames(perf) <- NULL
+  colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+  knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Luc-Léger')
+}
+```
+
+```{r echo = FALSE}
+# Conduite pied droit
+perf <- data %>% 
+  filter(data$Test == 'Conduite pied droit') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = min)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(perf$Record, ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Conduite pied droit')
+```
+
+```{r echo = FALSE}
+# Conduite pied gauche
+perf <- data %>% 
+  filter(data$Test == 'Conduite pied gauche') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = min)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(perf$Record, ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Conduite pied gauche')
+```
+
+```{r echo = FALSE}
+# Jonglage pied droit
+perf <- data %>% 
+  filter(data$Test == 'Jonglage pied droit') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = max)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(desc(perf$Record), ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Jonglage pied droit')
+```
+
+```{r echo = FALSE}
+# Jonglage pied gauche
+perf <- data %>% 
+  filter(data$Test == 'Jonglage pied gauche') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = max)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(desc(perf$Record), ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Jonglage pied gauche')
+```
+
+```{r echo = FALSE}
+# Jonglage tête
+perf <- data %>% 
+  filter(data$Test == 'Jonglage tête') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = max)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(desc(perf$Record), ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Jonglage tête')
+```
+
+```{r echo = FALSE}
+# Détente
+perf <- data %>% 
+  filter(data$Test == 'Détente') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = max)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(desc(perf$Record), ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Détente')
+```
+
+```{r echo = FALSE}
+# Vivacité L
+perf <- data %>% 
+  filter(data$Test == 'Vivacité L') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = min)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(perf$Record, ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Vivacité L')
+```
+
+```{r echo = FALSE}
+# Vitesse 10m
+perf <- data %>% 
+  filter(data$Test == 'Vitesse 10m') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = min)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(perf$Record, ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Vitesse 10m')
+```
+
+```{r echo = FALSE}
+# Vitesse 20m
+perf <- data %>% 
+  filter(data$Test == 'Vitesse 20m') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = min)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(perf$Record, ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Vitesse 20m')
+```
+
+```{r echo = FALSE}
+# Vitesse 40m
+perf <- data %>% 
+  filter(data$Test == 'Vitesse 40m') %>% 
+  na.omit()
+perf <- aggregate(perf$Résultat, by = list(perf$Test, perf$Joueuse), FUN = min)
+colnames(perf) <- c('Test', 'Joueuse', 'Record')
+perf$Rang <- rank(perf$Record, ties.method = 'min')
+perf <- merge(perf, data, by.x = c('Test', 'Joueuse', 'Record'), by.y = c('Test', 'Joueuse', 'Résultat'), all.x = TRUE)
+perf <- perf[perf$Rang %in% 1:input$Top, c('Rang', 'Joueuse', 'Record', 'Sous_cat', 'Saison', 'Session')]
+perf <- perf[order(perf$Rang),]
+rownames(perf) <- NULL
+colnames(perf) <- c('Rang', 'Joueuse', 'Record', 'Sous-catégorie', 'Saison', 'Session')
+knitr::kable(perf, align = c('rlccccc'), format = 'simple', caption = 'Vitesse 40m')
+```
