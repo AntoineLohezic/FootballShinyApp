@@ -1,5 +1,7 @@
 # FootballShinyApp
 
-This repo contains the code that you need to launch the Shiny App.
+Football clubs and associations realise tests in order to follow the players' evolution during the playing season and during their career. These tests deliver numeric values that can be hard to analyse in a basic table.
 
-Shiny is an R library useful to create web application. This app helps you visualise football and athletic datas intuitively.
+I created a Shiny App allowing anyone to understand, analyse and interpret the datas intuitively and almost instantly.
+
+The datas are not available in that repo for privacy reason.
